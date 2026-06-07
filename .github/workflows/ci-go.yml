@@ -1,0 +1,58 @@
+name: CI – Backend (Go)
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/ci-go.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/ci-go.yml"
+
+jobs:
+  test:
+    name: ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: api-gateway
+            go: "1.22"
+          - service: users-service
+            go: "1.23"
+          - service: orders-service
+            go: "1.23"
+          - service: payments-service
+            go: "1.23"
+          - service: products-service
+            go: "1.23"
+          - service: review-service
+            go: "1.23"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: backend/${{ matrix.service }}/go.sum
+
+      - name: Download modules
+        working-directory: backend/${{ matrix.service }}
+        run: go mod download
+
+      - name: Vet
+        working-directory: backend/${{ matrix.service }}
+        run: go vet ./...
+
+      - name: Test
+        working-directory: backend/${{ matrix.service }}
+        run: go test -race -coverprofile=coverage.out ./...
+
+      - name: Build
+        working-directory: backend/${{ matrix.service }}
+        run: go build ./...
