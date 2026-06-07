@@ -1,0 +1,245 @@
+.confirmation-page {
+  min-height: calc(100vh - 80px);
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+.confirmation-inner {
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.confirmation-inner.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── ICON ─── */
+.confirm-icon-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 2.5rem;
+}
+
+.confirm-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.confirm-icon svg {
+  stroke: var(--gold);
+}
+
+.confirm-rings {
+  position: absolute;
+  inset: 0;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  animation: ringPulse 2s ease-out infinite;
+}
+
+.ring-2 {
+  animation-delay: 0.5s;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ─── TEXT ─── */
+.confirm-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300;
+  color: var(--navy);
+  line-height: 1.1;
+  margin: 1rem 0;
+}
+
+.confirm-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.confirm-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: var(--text-muted);
+  margin: 1.5rem auto 2.5rem;
+  max-width: 450px;
+}
+
+/* ─── CARD ─── */
+.confirm-card {
+  background: var(--white);
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.confirm-card-header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(215, 189, 136, 0.2);
+}
+
+.confirm-card-label {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.confirm-card-value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--navy);
+}
+
+/* ─── TIMELINE ─── */
+.confirm-timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.timeline-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--blush);
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.timeline-dot.active {
+  border-color: var(--navy);
+  background: var(--navy);
+}
+
+.timeline-dot.active svg {
+  stroke: var(--gold);
+}
+
+.timeline-dot.done {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+.timeline-line {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  width: 100%;
+  height: 1px;
+  background: var(--blush);
+  z-index: 0;
+}
+
+.timeline-label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.7rem;
+  max-width: 80px;
+}
+
+.timeline-label.active {
+  color: var(--navy);
+  font-weight: 500;
+}
+
+/* ─── ACTIONS ─── */
+.confirm-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+/* ─── NOTE ─── */
+.confirm-note {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.confirm-note span {
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .confirm-card-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .confirm-timeline {
+    flex-direction: column;
+    max-width: 200px;
+    margin: 0 auto;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .timeline-step {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+  }
+  .timeline-line {
+    display: none;
+  }
+  .timeline-label {
+    max-width: none;
+    text-align: left;
+    margin-top: 0;
+  }
+}

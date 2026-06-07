@@ -1,0 +1,37 @@
+node_modules/
+dist/
+build/
+
+# Env / Secrets
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Docker (pas besoin dans le contexte de build)
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+build.sh
+
+# Docs / Config non-essentiels
+README.md
+*.md
+eslint.config.js
+
+# Tests
+coverage/
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+__tests__/

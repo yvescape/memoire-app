@@ -1,0 +1,32 @@
+networks:
+  microservices-net:
+    external: true
+
+services:
+  # ─── E-commerce Frontend ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend/e-commerce
+      args:
+        VITE_API_URL: /api
+    image: capedev/e-commerce-frontend:latest
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - microservices-net
+
+  # ─── Admin Panel ──────────────────────────────────────────────
+  admin:
+    build:
+      context: ./admin
+      args:
+        VITE_API_URL: /api
+    image: capedev/admin-panel:latest
+    container_name: admin
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    networks:
+      - microservices-net

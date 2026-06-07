@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: .
+    image: capedev/e-commerce-frontend:latest
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    name: microservices-net
+    driver: bridge

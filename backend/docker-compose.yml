@@ -1,0 +1,219 @@
+networks:
+  microservices-net:
+    driver: bridge
+    name: microservices-net
+
+volumes:
+  users_db_data:
+  products_db_data:
+  orders_db_data:
+  payments_db_data:
+  reviews_db_data:
+
+x-common-env: &jwt-public
+  JWT_PUBLIC_KEY: "${JWT_PUBLIC_KEY}"
+
+x-healthcheck-go: &healthcheck-go
+  interval: 20s
+  timeout: 5s
+  retries: 3
+  start_period: 10s
+
+services:
+  # ─── Databases ────────────────────────────────────────────────
+  users-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: pass123
+    volumes:
+      - users_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_admin -d users_db"]
+      interval: 10s
+      retries: 5
+
+  products-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: products_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: pass123
+    volumes:
+      - products_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_admin -d products_db"]
+      interval: 10s
+      retries: 5
+
+  orders-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: orders_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: pass123
+    volumes:
+      - orders_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_admin -d orders_db"]
+      interval: 10s
+      retries: 5
+
+  payments-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: payments_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: pass123
+    volumes:
+      - payments_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_admin -d payments_db"]
+      interval: 10s
+      retries: 5
+
+  reviews-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: reviews_db
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: pass123
+    volumes:
+      - reviews_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_admin -d reviews_db"]
+      interval: 10s
+      retries: 5
+
+  # ─── Services ─────────────────────────────────────────────────
+  users:
+    build:
+      context: ./users-service
+    environment:
+      PORT: "8001"
+      DATABASE_URL: "host=users-db user=user_admin password=pass123 dbname=users_db port=5432 sslmode=disable"
+      JWT_PRIVATE_KEY: "${JWT_PRIVATE_KEY}"
+    ports:
+      - "8001:8001"
+    depends_on:
+      users-db:
+        condition: service_healthy
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8001/health/ || exit 1"]
+      <<: *healthcheck-go
+
+  products:
+    build:
+      context: ./products-service
+    environment:
+      PORT: "8002"
+      DATABASE_URL: "host=products-db user=user_admin password=pass123 dbname=products_db port=5432 sslmode=disable"
+      <<: *jwt-public
+    ports:
+      - "8002:8002"
+    depends_on:
+      products-db:
+        condition: service_healthy
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/health/ || exit 1"]
+      <<: *healthcheck-go
+
+  orders:
+    build:
+      context: ./orders-service
+    environment:
+      PORT: "8003"
+      DATABASE_URL: "host=orders-db user=user_admin password=pass123 dbname=orders_db port=5432 sslmode=disable"
+      <<: *jwt-public
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN}"
+      PRODUCTS_SERVICE_URL: "http://products:8002"
+    ports:
+      - "8003:8003"
+    depends_on:
+      orders-db:
+        condition: service_healthy
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8003/health/ || exit 1"]
+      <<: *healthcheck-go
+
+  payments:
+    build:
+      context: ./payments-service
+    environment:
+      PORT: "8004"
+      DATABASE_URL: "host=payments-db user=user_admin password=pass123 dbname=payments_db port=5432 sslmode=disable"
+      <<: *jwt-public
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN}"
+      ORDERS_SERVICE_URL: "http://orders:8003"
+    ports:
+      - "8004:8004"
+    depends_on:
+      payments-db:
+        condition: service_healthy
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8004/health/ || exit 1"]
+      <<: *healthcheck-go
+
+  reviews:
+    build:
+      context: ./review-service
+    environment:
+      PORT: "8005"
+      DATABASE_URL: "host=reviews-db user=user_admin password=pass123 dbname=reviews_db port=5432 sslmode=disable"
+      <<: *jwt-public
+    ports:
+      - "8005:8005"
+    depends_on:
+      reviews-db:
+        condition: service_healthy
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8005/health/ || exit 1"]
+      <<: *healthcheck-go
+
+  gateway:
+    build:
+      context: ./api-gateway
+    environment:
+      PORT: "8080"
+      <<: *jwt-public
+      USERS_SERVICE_URL: "http://users:8001"
+      PRODUCTS_SERVICE_URL: "http://products:8002"
+      ORDERS_SERVICE_URL: "http://orders:8003"
+      PAYMENTS_SERVICE_URL: "http://payments:8004"
+      REVIEWS_SERVICE_URL: "http://reviews:8005"
+    ports:
+      - "8080:8080"
+    depends_on:
+      users:
+        condition: service_healthy
+      products:
+        condition: service_healthy
+      orders:
+        condition: service_healthy
+      payments:
+        condition: service_healthy
+      reviews:
+        condition: service_healthy
+    networks:
+      - microservices-net

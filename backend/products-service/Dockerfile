@@ -1,0 +1,17 @@
+FROM golang:1.23-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -o products-service ./cmd/main.go
+RUN go build -o seed ./cmd/seed/main.go
+
+FROM alpine:3.19
+RUN apk add --no-cache ca-certificates
+WORKDIR /app
+COPY --from=builder /app/products-service .
+COPY --from=builder /app/seed .
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+EXPOSE 8002
+CMD ["./entrypoint.sh"]
