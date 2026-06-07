@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         app:
-          - name: storefront
+          - name: e-commerce
             path: interface/frontend/e-commerce
           - name: admin
             path: interface/admin

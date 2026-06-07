@@ -77,7 +77,7 @@ describe('Cart — résumé de commande', () => {
     await waitFor(() => {
       // delivery_price = 3000 → "3 000 FCFA"
       // Utilisation de getAllByText car "93 000 FCFA" contient aussi "3 000" comme sous-chaîne
-      expect(screen.getAllByText(/3[\s  ]000/)[0]).toBeInTheDocument()
+      expect(screen.getAllByText(/3\s000/)[0]).toBeInTheDocument()
     })
   })
 

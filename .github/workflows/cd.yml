@@ -86,7 +86,7 @@ jobs:
           - image: review-service
             context: backend/review-service
             changed: ${{ needs.detect-changes.outputs.review-service }}
-          - image: storefront
+          - image: e-commerce
             context: interface/frontend/e-commerce
             changed: ${{ needs.detect-changes.outputs.storefront }}
           - image: admin

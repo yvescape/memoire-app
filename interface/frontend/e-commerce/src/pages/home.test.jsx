@@ -51,7 +51,7 @@ describe('Home — produits featured', () => {
     render(<Home />)
     await waitFor(() => {
       // 45000 → "45 000" (formaté avec toLocaleString fr-FR)
-      expect(screen.getByText(/45[\s ]000/)).toBeInTheDocument()
+      expect(screen.getByText(/45\s000/)).toBeInTheDocument()
     })
   })
 
