@@ -19,13 +19,13 @@ resources:
   - users-service/metric-templates.yaml
   - users-service/canary.yaml
   - products-service/deployment.yaml
-  - products-service/service.yaml
+  - products-service/canary.yaml
   - orders-service/deployment.yaml
-  - orders-service/service.yaml
+  - orders-service/canary.yaml
   - payments-service/deployment.yaml
-  - payments-service/service.yaml
+  - payments-service/canary.yaml
   - review-service/deployment.yaml
-  - review-service/service.yaml
+  - review-service/canary.yaml
   # frontends
   - e-commerce/deployment.yaml
   - e-commerce/service.yaml
