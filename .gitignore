@@ -1,5 +1,6 @@
 # Secrets — never commit
 infra/scripts/.env
+infra/k8s/secret-app.yaml
 *.env
 .env.*
 !.env.example

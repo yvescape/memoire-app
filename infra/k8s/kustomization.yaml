@@ -6,7 +6,7 @@ namespace: memoire-app
 resources:
   - 00-namespace.yaml
   # secrets & config
-  # secret-app.yaml is applied manually (not committed — contains JWT keys/DB passwords)
+  - sealed-secret.yaml
   # postgresql
   - postgres/configmap-init.yaml
   - postgres/statefulset.yaml
