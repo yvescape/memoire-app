@@ -1,0 +1,50 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: users-service
+  namespace: memoire-app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: users-service
+  progressDeadlineSeconds: 120
+  service:
+    port: 8080
+    targetPort: 8080
+    gatewayRefs:
+      - name: users-service
+        namespace: memoire-app
+        group: core
+        kind: Service
+        port: 8080
+  analysis:
+    interval: 30s
+    threshold: 5
+    stepWeight: 10
+    maxWeight: 50
+    metrics:
+      - name: success-rate
+        templateRef:
+          name: success-rate
+          namespace: memoire-app
+        thresholdRange:
+          min: 99
+        interval: 1m
+        templateVariables:
+          direction: inbound
+      - name: latency
+        templateRef:
+          name: latency
+          namespace: memoire-app
+        thresholdRange:
+          max: 500
+        interval: 30s
+        templateVariables:
+          direction: inbound
+    webhooks:
+      - name: load-test
+        type: rollout
+        url: http://flagger-loadtester.memoire-app/
+        metadata:
+          cmd: "hey -z 2m -q 10 -c 2 http://users-service-canary.memoire-app:8080/health"

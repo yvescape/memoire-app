@@ -19,7 +19,6 @@ spec:
     metadata:
       labels:
         app: users-service
-        version: v1
     spec:
       imagePullSecrets:
         - name: ghcr-secret

@@ -16,9 +16,8 @@ resources:
   - api-gateway/service.yaml
   - users-service/deployment.yaml
   - users-service/service.yaml
-  - users-service/deployment-v2.yaml
-  - users-service/service-v2.yaml
-  - users-service/httproute.yaml
+  - users-service/metric-templates.yaml
+  - users-service/canary.yaml
   - products-service/deployment.yaml
   - products-service/service.yaml
   - orders-service/deployment.yaml

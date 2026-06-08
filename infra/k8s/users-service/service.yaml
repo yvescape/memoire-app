@@ -8,7 +8,6 @@ metadata:
 spec:
   selector:
     app: users-service
-    version: v1
   ports:
     - name: http
       port: 8080
