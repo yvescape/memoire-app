@@ -1,14 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: users-service
+  name: users-service-v2
   namespace: memoire-app
   labels:
     app: users-service
+    version: v2
 spec:
   selector:
     app: users-service
-    version: v1
+    version: v2
   ports:
     - name: http
       port: 8080

@@ -1,0 +1,19 @@
+apiVersion: policy.linkerd.io/v1beta2
+kind: HTTPRoute
+metadata:
+  name: users-service-canary
+  namespace: memoire-app
+spec:
+  parentRefs:
+    - name: users-service
+      kind: Service
+      group: ""
+      port: 8080
+  rules:
+    - backendRefs:
+        - name: users-service
+          port: 8080
+          weight: 90
+        - name: users-service-v2
+          port: 8080
+          weight: 10

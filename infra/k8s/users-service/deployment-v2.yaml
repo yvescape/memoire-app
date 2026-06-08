@@ -1,10 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: users-service
+  name: users-service-v2
   namespace: memoire-app
   labels:
     app: users-service
+    version: v2
 spec:
   replicas: 2
   strategy:
@@ -15,11 +16,12 @@ spec:
   selector:
     matchLabels:
       app: users-service
+      version: v2
   template:
     metadata:
       labels:
         app: users-service
-        version: v1
+        version: v2
     spec:
       imagePullSecrets:
         - name: ghcr-secret
@@ -32,6 +34,8 @@ spec:
           env:
             - name: PORT
               value: "8080"
+            - name: APP_VERSION
+              value: "v2"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
