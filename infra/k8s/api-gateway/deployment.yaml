@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: memoire-app
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: api-gateway
+          image: ghcr.io/yvescape/api-gateway:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: JWT_PUBLIC_KEY
+            - name: INTERNAL_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: INTERNAL_SERVICE_TOKEN
+            - name: USERS_SERVICE_URL
+              value: "http://users-service:8080"
+            - name: PRODUCTS_SERVICE_URL
+              value: "http://products-service:8080"
+            - name: ORDERS_SERVICE_URL
+              value: "http://orders-service:8080"
+            - name: PAYMENTS_SERVICE_URL
+              value: "http://payments-service:8080"
+            - name: REVIEWS_SERVICE_URL
+              value: "http://review-service:8080"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10

@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild all images (ignore path filter)'
+        type: boolean
+        default: false
 
 env:
   REGISTRY: ghcr.io
@@ -14,14 +19,14 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      api-gateway:      ${{ steps.filter.outputs.api-gateway }}
-      users-service:    ${{ steps.filter.outputs.users-service }}
-      orders-service:   ${{ steps.filter.outputs.orders-service }}
-      payments-service: ${{ steps.filter.outputs.payments-service }}
-      products-service: ${{ steps.filter.outputs.products-service }}
-      review-service:   ${{ steps.filter.outputs.review-service }}
-      storefront:       ${{ steps.filter.outputs.storefront }}
-      admin:            ${{ steps.filter.outputs.admin }}
+      api-gateway:      ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.api-gateway }}
+      users-service:    ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.users-service }}
+      orders-service:   ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.orders-service }}
+      payments-service: ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.payments-service }}
+      products-service: ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.products-service }}
+      review-service:   ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.review-service }}
+      storefront:       ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.storefront }}
+      admin:            ${{ github.event.inputs.force_rebuild == 'true' && 'true' || steps.filter.outputs.admin }}
     steps:
       - uses: actions/checkout@v4
         with:

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: memoire-app
+data:
+  init.sql: |
+    CREATE USER "user" WITH PASSWORD 'pass';
+    CREATE DATABASE users_db OWNER "user";
+    CREATE DATABASE products_db OWNER "user";
+    CREATE DATABASE orders_db OWNER "user";
+    CREATE DATABASE payments_db OWNER "user";
+    CREATE DATABASE reviews_db OWNER "user";
+    GRANT ALL PRIVILEGES ON DATABASE users_db TO "user";
+    GRANT ALL PRIVILEGES ON DATABASE products_db TO "user";
+    GRANT ALL PRIVILEGES ON DATABASE orders_db TO "user";
+    GRANT ALL PRIVILEGES ON DATABASE payments_db TO "user";
+    GRANT ALL PRIVILEGES ON DATABASE reviews_db TO "user";

@@ -1,0 +1,19 @@
+# Secrets — never commit
+infra/scripts/.env
+*.env
+.env.*
+!.env.example
+
+# Build artifacts
+dist/
+build/
+node_modules/
+
+# Go
+*.test
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
