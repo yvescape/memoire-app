@@ -7,6 +7,7 @@ metadata:
     app: admin
 spec:
   replicas: 2
+  minReadySeconds: 5
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -20,6 +21,7 @@ spec:
       labels:
         app: admin
     spec:
+      terminationGracePeriodSeconds: 30
       imagePullSecrets:
         - name: ghcr-secret
       containers:
@@ -28,6 +30,10 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 5"]
           env:
             - name: VITE_API_URL
               value: "http://api.memoire.local"

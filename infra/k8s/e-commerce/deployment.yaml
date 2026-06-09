@@ -7,6 +7,7 @@ metadata:
     app: e-commerce
 spec:
   replicas: 2
+  minReadySeconds: 5
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -20,6 +21,7 @@ spec:
       labels:
         app: e-commerce
     spec:
+      terminationGracePeriodSeconds: 30
       imagePullSecrets:
         - name: ghcr-secret
       containers:
@@ -28,6 +30,10 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 5"]
           resources:
             requests:
               cpu: 10m
