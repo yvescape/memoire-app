@@ -13,7 +13,8 @@ resources:
   - postgres/service.yaml
   # microservices
   - api-gateway/deployment.yaml
-  - api-gateway/service.yaml
+  - api-gateway/canary.yaml
+  - api-gateway/ingressroute.yaml
   - users-service/deployment.yaml
   - users-service/service.yaml
   - users-service/metric-templates.yaml

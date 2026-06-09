@@ -29,14 +29,3 @@ spec:
                 name: admin
                 port:
                   number: 3001
-
-    - host: api.memoire.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: api-gateway
-                port:
-                  number: 8080
