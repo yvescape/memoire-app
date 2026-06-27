@@ -1,0 +1,81 @@
+# kube-prometheus-stack — valeurs sobres pour nœud k3s unique
+
+# Alertmanager désactivé → économie ~100 Mo RAM
+alertmanager:
+  enabled: false
+
+# ── Grafana ────────────────────────────────────────────────────────────────────
+grafana:
+  adminPassword: "Gr4f@n4M3m01re!"
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: false  # IngressRoute Traefik gérée séparément
+
+  # Injection Linkerd → le pod obtient une identité mesh, requise par l'AuthorizationPolicy prometheus-admin
+  podAnnotations:
+    linkerd.io/inject: "enabled"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+
+  additionalDataSources:
+    - name: linkerd-prometheus
+      uid: linkerd-prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus.linkerd-viz:9090
+      isDefault: false
+      jsonData:
+        httpMethod: POST
+        timeInterval: "5s"
+
+# ── Prometheus ─────────────────────────────────────────────────────────────────
+prometheus:
+  prometheusSpec:
+    retention: "2d"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 768Mi
+    # emptyDir → pas de PVC ; données perdues au restart, acceptable avec retention 2d
+    storageSpec:
+      emptyDir: {}
+
+# ── Prometheus Operator ────────────────────────────────────────────────────────
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ── kube-state-metrics ────────────────────────────────────────────────────────
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+# ── Node Exporter ─────────────────────────────────────────────────────────────
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi

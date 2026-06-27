@@ -1,0 +1,16 @@
+# Adapté de github.com/linkerd/linkerd2/main/grafana/authzpolicy-grafana.yaml
+# Autorise le SA Grafana (kube-prometheus-stack) à accéder au Server prometheus-admin
+apiVersion: policy.linkerd.io/v1alpha1
+kind: AuthorizationPolicy
+metadata:
+  name: grafana
+  namespace: linkerd-viz
+spec:
+  targetRef:
+    group: policy.linkerd.io
+    kind: Server
+    name: prometheus-admin
+  requiredAuthenticationRefs:
+    - kind: ServiceAccount
+      name: kube-prometheus-stack-grafana
+      namespace: monitoring
