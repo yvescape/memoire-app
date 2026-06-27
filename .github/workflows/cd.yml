@@ -3,6 +3,10 @@ name: CD – Build & Push Docker Images
 on:
   push:
     branches: [main]
+    paths:
+      - 'backend/**'
+      - 'interface/**'
+      - '.github/workflows/cd.yml'
   workflow_dispatch:
     inputs:
       force_rebuild:
@@ -144,3 +148,41 @@ jobs:
           ignore-unfixed: true
           exit-code: "0"
           format: table
+
+  # ── Étape 3 : mise à jour des manifests k8s avec le nouveau SHA ──────────
+  update-manifests:
+    needs: [detect-changes, build-push]
+    if: needs.build-push.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update deployment image tags
+        run: |
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+
+          update_image() {
+            local file=$1 image=$2
+            sed -i "s|image: ghcr.io/yvescape/${image}:.*|image: ghcr.io/yvescape/${image}:${SHORT_SHA}|" "$file"
+          }
+
+          [ "${{ needs.detect-changes.outputs.api-gateway }}"      = "true" ] && update_image infra/k8s/api-gateway/deployment.yaml      api-gateway
+          [ "${{ needs.detect-changes.outputs.users-service }}"    = "true" ] && update_image infra/k8s/users-service/deployment.yaml    users-service
+          [ "${{ needs.detect-changes.outputs.orders-service }}"   = "true" ] && update_image infra/k8s/orders-service/deployment.yaml   orders-service
+          [ "${{ needs.detect-changes.outputs.payments-service }}" = "true" ] && update_image infra/k8s/payments-service/deployment.yaml payments-service
+          [ "${{ needs.detect-changes.outputs.products-service }}" = "true" ] && update_image infra/k8s/products-service/deployment.yaml products-service
+          [ "${{ needs.detect-changes.outputs.review-service }}"   = "true" ] && update_image infra/k8s/review-service/deployment.yaml   review-service
+          [ "${{ needs.detect-changes.outputs.storefront }}"       = "true" ] && update_image infra/k8s/e-commerce/deployment.yaml       e-commerce
+          [ "${{ needs.detect-changes.outputs.admin }}"            = "true" ] && update_image infra/k8s/admin/deployment.yaml            admin
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add infra/k8s/
+          git diff --staged --quiet && exit 0
+          git commit -m "chore(deploy): update image tags to ${SHORT_SHA} [skip ci]"
+          git pull --rebase origin main
+          git push

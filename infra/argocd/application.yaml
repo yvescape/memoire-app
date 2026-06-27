@@ -17,17 +17,65 @@ spec:
       prune: true
       selfHeal: true
   ignoreDifferences:
-    # Flagger scales users-service Deployment to 0 after creating the primary
+    # Flagger scales the original Deployment to 0 and rewrites Service selectors
+    # after creating the -primary counterpart. ArgoCD must not fight these changes.
     - group: apps
       kind: Deployment
       name: users-service
       namespace: memoire-app
-      jsonPointers:
-        - /spec/replicas
-    # Flagger rewrites the selector to point to users-service-primary pods
+      jsonPointers: [/spec/replicas]
+    - group: apps
+      kind: Deployment
+      name: products-service
+      namespace: memoire-app
+      jsonPointers: [/spec/replicas]
+    - group: apps
+      kind: Deployment
+      name: orders-service
+      namespace: memoire-app
+      jsonPointers: [/spec/replicas]
+    - group: apps
+      kind: Deployment
+      name: payments-service
+      namespace: memoire-app
+      jsonPointers: [/spec/replicas]
+    - group: apps
+      kind: Deployment
+      name: review-service
+      namespace: memoire-app
+      jsonPointers: [/spec/replicas]
+    - group: apps
+      kind: Deployment
+      name: api-gateway
+      namespace: memoire-app
+      jsonPointers: [/spec/replicas]
     - group: ""
       kind: Service
       name: users-service
       namespace: memoire-app
-      jsonPointers:
-        - /spec/selector
+      jsonPointers: [/spec/selector]
+    - group: ""
+      kind: Service
+      name: products-service
+      namespace: memoire-app
+      jsonPointers: [/spec/selector]
+    - group: ""
+      kind: Service
+      name: orders-service
+      namespace: memoire-app
+      jsonPointers: [/spec/selector]
+    - group: ""
+      kind: Service
+      name: payments-service
+      namespace: memoire-app
+      jsonPointers: [/spec/selector]
+    - group: ""
+      kind: Service
+      name: review-service
+      namespace: memoire-app
+      jsonPointers: [/spec/selector]
+    - group: ""
+      kind: Service
+      name: api-gateway
+      namespace: memoire-app
+      jsonPointers: [/spec/selector]
