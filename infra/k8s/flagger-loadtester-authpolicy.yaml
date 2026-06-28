@@ -7,7 +7,7 @@ spec:
   identities:
     - "system:serviceaccount:flagger-system:flagger"
 ---
-apiVersion: policy.linkerd.io/v1beta3
+apiVersion: policy.linkerd.io/v1alpha1
 kind: AuthorizationPolicy
 metadata:
   name: allow-flagger-to-loadtester
