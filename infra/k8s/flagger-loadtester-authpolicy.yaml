@@ -1,23 +1,7 @@
-apiVersion: policy.linkerd.io/v1alpha1
-kind: MeshTLSAuthentication
-metadata:
-  name: flagger
-  namespace: memoire-app
-spec:
-  identities:
-    - "system:serviceaccount:flagger-system:flagger"
----
-apiVersion: policy.linkerd.io/v1alpha1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-flagger-to-loadtester
-  namespace: memoire-app
-spec:
-  targetRef:
-    group: core
-    kind: ServiceAccount
-    name: flagger-loadtester
-  requiredAuthenticationRefs:
-    - name: flagger
-      kind: MeshTLSAuthentication
-      group: policy.linkerd.io/v1alpha1
+# Le loadtester tourne hors du mesh Linkerd (linkerd.io/inject: disabled)
+# pour que Flagger puisse l'appeler en HTTP simple sans mTLS cross-namespace.
+# Ce fichier est conservé pour documenter le choix d'architecture.
+#
+# Namespace memoire-app a linkerd.io/inject: enabled → la désactivation
+# est portée par l'annotation du pod template du déploiement flagger-loadtester
+# (appliquée via kubectl patch, non géré par ArgoCD).
