@@ -1,0 +1,23 @@
+apiVersion: policy.linkerd.io/v1alpha1
+kind: MeshTLSAuthentication
+metadata:
+  name: flagger
+  namespace: memoire-app
+spec:
+  identities:
+    - "system:serviceaccount:flagger-system:flagger"
+---
+apiVersion: policy.linkerd.io/v1beta3
+kind: AuthorizationPolicy
+metadata:
+  name: allow-flagger-to-loadtester
+  namespace: memoire-app
+spec:
+  targetRef:
+    group: core
+    kind: ServiceAccount
+    name: flagger-loadtester
+  requiredAuthenticationRefs:
+    - name: flagger
+      kind: MeshTLSAuthentication
+      group: policy.linkerd.io/v1alpha1

@@ -35,3 +35,5 @@ resources:
   - admin/service.yaml
   # routing
   - ingress.yaml
+  # linkerd authz
+  - flagger-loadtester-authpolicy.yaml
