@@ -24,7 +24,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: products-service
-          image: ghcr.io/yvescape/products-service:fdaaf00
+          image: ghcr.io/yvescape/products-service:58782ec
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
