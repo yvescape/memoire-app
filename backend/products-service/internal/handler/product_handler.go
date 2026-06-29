@@ -95,5 +95,5 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 }
 
 func Health(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "products", "version": "1.2.0"})
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "products", "version": "1.3.0"})
 }
